@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member & Renter Portal | CCT Hotel & Resort</title>
+    <!-- Google Fonts Poppins & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="member-dashboard.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<!-- Launcher button -->
+    <button class="cb-launcher" id="cbLauncher" aria-label="Open chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <!-- Chat window -->
+    <div class="cb-window" id="cbWindow">
+        <div class="cb-header">
+            <div class="cb-header-title">
+                CCT Hotel Assistant
+                <small>Typically replies instantly</small>
+            </div>
+            <button class="cb-close" id="cbClose" aria-label="Close chat">&times;</button>
+        </div>
+
+        <!-- Messages are added here by chatbot.js -->
+        <div class="cb-messages" id="cbMessages"></div>
+
+        <!-- Quick-reply buttons are added here by chatbot.js -->
+        <div class="cb-quick" id="cbQuick"></div>
+
+        <div class="cb-input-wrap">
+            <form class="cb-input-box" id="cbForm" autocomplete="off">
+                <input type="text" id="cbInput" placeholder="Write a reply...">
+
+                <!-- Attach button -->
+                <button type="button" class="cb-icon-btn" id="cbAttach" aria-label="Attach file">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+
+                <!-- Send button -->
+                <button type="submit" class="cb-icon-btn cb-send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+
+                <input type="file" id="cbFile" hidden>
+            </form>
+        </div>
+    </div>
+
+<body>
+    <!-- TOP NAVIGATION BAR -->
+    <header class="member-topbar">
+        <div class="topbar-left">
+            <a href="home.html" class="logo-link">
+                <img src="images/logo.png" class="logo" alt="CCT Hotel Logo" onerror="this.src='images/vendor.png'">
+                <div class="logo-text">CCT <span>Hotel</span></div>
+            </a>
+            <span class="portal-badge">Member Portal</span>
+        </div>
+
+        <div class="topbar-right">
+            <div class="member-profile-info">
+                <div class="avatar-box">
+                    <img src="images/user.jpg" alt="Member Avatar" onerror="this.src='images/logo.png'">
+                </div>
+                <div class="profile-text">
+                    <strong id="headerMemberName">Maria Santos</strong>
+                    <span class="member-tier"><ion-icon name="sparkles"></ion-icon> CCT Gold Member</span>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <a href="booking.html" class="btn-book-stay">
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                    <span>New Reservation</span>
+                </a>
+                <a href="home.html" class="btn-logout" id="logoutBtn" title="Sign Out">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN MEMBER CONTAINER -->
+    <main class="dashboard-container">
+        <!-- WELCOME BANNER -->
+        <section class="welcome-card">
+            <div class="welcome-content">
+                <span class="welcome-tag">CCT Renter & Membership Dashboard</span>
+                <h1 id="welcomeHeading">Welcome back, Maria!</h1>
+                <p>Track and manage your verified hotel reservations, active stays, and upcoming check-ins.</p>
+            </div>
+            <div class="stats-pills">
+                <div class="stat-pill" data-filter="all">
+                    <span class="stat-num" id="statTotal">0</span>
+                    <span class="stat-label">Total Stays</span>
+                </div>
+                <div class="stat-pill is-pending" data-filter="pending">
+                    <span class="stat-num" id="statPending">0</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="stat-pill is-completed" data-filter="completed">
+                    <span class="stat-num" id="statCompleted">0</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat-pill is-cancelled" data-filter="cancelled">
+                    <span class="stat-num" id="statCancelled">0</span>
+                    <span class="stat-label">Cancelled</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESERVATIONS FEATURE SECTION -->
+        <section class="reservations-section">
+            <div class="section-header">
+                <div>
+                    <h2>My Hotel Reservations</h2>
+                    <p>Overview of your pending requests, completed stays, and cancelled bookings</p>
+                </div>
+
+                <!-- FILTER TABS -->
+                <div class="filter-tabs">
+                    <button type="button" class="tab-btn is-active" data-filter="all">
+                        <ion-icon name="grid-outline"></ion-icon>
+                        <span>All</span>
+                        <span class="tab-badge" id="badgeAll">0</span>
+                    </button>
+                    <button type="button" class="tab-btn" data-filter="pending">
+                        <ion-icon name="hourglass-outline"></ion-icon>
+                        <span>Pending</span>
+                        <span class="tab-badge" id="badgePending">0</span>
+                    </button>
+                    <button type="button" class="tab-btn" data-filter="completed">
+                        <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+                        <span>Completed</span>
+                        <span class="tab-badge" id="badgeCompleted">0</span>
+                    </button>
+                    <button type="button" class="tab-btn" data-filter="cancelled">
+                        <ion-icon name="close-circle-outline"></ion-icon>
+                        <span>Cancelled</span>
+                        <span class="tab-badge" id="badgeCancelled">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEARCH / FILTER CONTROLS -->
+            <div class="search-bar-row">
+                <div class="search-input-box">
+                    <ion-icon name="search-outline"></ion-icon>
+                    <input type="text" id="searchInput" placeholder="Search by booking reference code or room type...">
+                </div>
+                <div class="result-count-label" id="resultCount">Showing all reservations</div>
+            </div>
+
+            <!-- RESERVATIONS LIST / GRID -->
+            <div class="reservations-grid" id="reservationsGrid">
+                <!-- Cards will be populated dynamically by JavaScript -->
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon"><ion-icon name="calendar-outline"></ion-icon></div>
+                <h3>No Reservations Found</h3>
+                <p>You don't have any bookings matching this status yet.</p>
+                <a href="booking.html" class="btn-book-stay">Make a Reservation</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="member-footer">
+        <p>&copy; 2026 CCT Hotel & Resort — Member Services & Reservation Portal</p>
+        <div class="footer-links">
+            <a href="home.html">Back to Main Website</a>
+            <a href="booking.html">Book Another Room</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
+    <script src="member-dashboard.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+
+</html>

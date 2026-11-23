@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Reservation | CCT Hotel & Resort</title>
+    <!-- Google Fonts Poppins & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="booking.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<!-- Launcher button -->
+    <button class="cb-launcher" id="cbLauncher" aria-label="Open chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <!-- Chat window -->
+    <div class="cb-window" id="cbWindow">
+        <div class="cb-header">
+            <div class="cb-header-title">
+                CCT Hotel Assistant
+                <small>Typically replies instantly</small>
+            </div>
+            <button class="cb-close" id="cbClose" aria-label="Close chat">&times;</button>
+        </div>
+
+        <!-- Messages are added here by chatbot.js -->
+        <div class="cb-messages" id="cbMessages"></div>
+
+        <!-- Quick-reply buttons are added here by chatbot.js -->
+        <div class="cb-quick" id="cbQuick"></div>
+
+        <div class="cb-input-wrap">
+            <form class="cb-input-box" id="cbForm" autocomplete="off">
+                <input type="text" id="cbInput" placeholder="Write a reply...">
+
+                <!-- Attach button -->
+                <button type="button" class="cb-icon-btn" id="cbAttach" aria-label="Attach file">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+
+                <!-- Send button -->
+                <button type="submit" class="cb-icon-btn cb-send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+
+                <input type="file" id="cbFile" hidden>
+            </form>
+        </div>
+    </div>
+
+<body>
+    <!-- HEADER NAVBAR -->
+    <header class="booking-nav">
+        <a href="home.html" class="logo-link">
+            <img src="images/logo.png" class="logo" alt="CCT Hotel Logo" onerror="this.src='images/vendor.png'">
+            <div class="logo-text">CCT <span>Hotel</span></div>
+        </a>
+        <div class="nav-links">
+            <button type="button" class="btn-cancel-nav" id="openCancelModalNavBtn">
+                <ion-icon name="close-circle-outline"></ion-icon>
+                <span>Cancel Reservation</span>
+            </button>
+            <a href="member-dashboard.html" class="back-home-btn" style="background: rgba(255,178,0,0.2); border-color: var(--secondary); color: #fff;">
+                <ion-icon name="person-circle-outline"></ion-icon>
+                <span>Member Portal</span>
+            </a>
+            <a href="home.html" class="back-home-btn">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- RESERVATION WIZARD WRAPPER -->
+    <main class="reservation-container">
+        <div class="reservation-head">
+            <span class="reservation-badge">Direct Online Booking</span>
+            <h1>Make a Reservation</h1>
+            <p>Complete the steps below to reserve your luxury stay with instant confirmation</p>
+            <div class="cancel-callout-banner">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>Need to cancel an existing booking?</span>
+                <button type="button" class="cancel-link-btn" id="openCancelModalHeaderBtn">
+                    <span>Look up and cancel reservation</span> &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- STEPPER INDICATOR -->
+        <ol class="stepper" id="stepper">
+            <li class="step is-active" data-step="1">
+                <span class="dot">1</span>
+                <span class="label">Guest Info</span>
+            </li>
+            <li class="step" data-step="2">
+                <span class="dot">2</span>
+                <span class="label">Dates</span>
+            </li>
+            <li class="step" data-step="3">
+                <span class="dot">3</span>
+                <span class="label">Rooms</span>
+            </li>
+            <li class="step" data-step="4">
+                <span class="dot">4</span>
+                <span class="label">Review</span>
+            </li>
+            <li class="step" data-step="5">
+                <span class="dot">5</span>
+                <span class="label">Payment</span>
+            </li>
+            <li class="step" data-step="6">
+                <span class="dot">6</span>
+                <span class="label">Done</span>
+            </li>
+        </ol>
+
+        <!-- WIZARD FORM -->
+        <form class="wizard-card" id="reservationForm" novalidate>
+
+            <!-- STEP 1 : PROPERTY & GUEST -->
+            <section class="panel is-active" data-panel="1">
+                <div class="panel-head">
+                    <h2><ion-icon name="business-outline"></ion-icon> Property & Guest Information</h2>
+                    <span>Step 1 of 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="grid-2">
+                        <div class="field">
+                            <label for="propertyName">Selected Hotel / Resort</label>
+                            <input type="text" id="propertyName" name="propertyName" class="is-readonly-prop"
+                                value="CCT Hotel & Resort" readonly>
+                        </div>
+                        <div class="field">
+                            <label for="propertyContact">Hotel Concierge Desk</label>
+                            <input type="text" id="propertyContact" name="propertyContact" class="is-readonly-prop"
+                                value="+63 (02) 8123-4567 | reservations@ccthotel.com" readonly>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="propertyAddress">Property Location</label>
+                        <input type="text" id="propertyAddress" name="propertyAddress" class="is-readonly-prop"
+                            value="CCT Campus Complex, Metro Manila, Philippines" readonly>
+                    </div>
+
+                    <hr class="divider">
+
+                    <h3 class="sub-heading"><ion-icon name="person-circle-outline"></ion-icon> Primary Guest Details</h3>
+                    <div class="grid-2">
+                        <div class="field">
+                            <label for="guestName">Full Name *</label>
+                            <input type="text" id="guestName" name="guestName" required placeholder="e.g. Maria Santos">
+                        </div>
+                        <div class="field">
+                            <label for="guestCountry">Country of Residence *</label>
+                            <input type="text" id="guestCountry" name="guestCountry" required placeholder="e.g. Philippines">
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label for="guestEmail">Email Address *</label>
+                            <input type="email" id="guestEmail" name="guestEmail" required placeholder="e.g. maria.santos@email.com">
+                        </div>
+                        <div class="field">
+                            <label for="guestPhone">Contact Phone Number *</label>
+                            <input type="tel" id="guestPhone" name="guestPhone" required placeholder="e.g. +63 917 123 4567">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-cancel-flow" data-cancel-wizard>
+                        <ion-icon name="close-outline"></ion-icon> Discard
+                    </button>
+                    <button type="button" class="btn btn-primary" data-next>
+                        Continue to Dates <ion-icon name="arrow-forward-outline"></ion-icon>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 2 : STAY DATES -->
+            <section class="panel" data-panel="2">
+                <div class="panel-head">
+                    <h2><ion-icon name="calendar-outline"></ion-icon> Stay Schedule</h2>
+                    <span>Step 2 of 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="grid-2">
+                        <div class="field">
+                            <label for="arrivalDate">Check-in / Arrival Date *</label>
+                            <input type="date" id="arrivalDate" name="arrivalDate" required>
+                        </div>
+                        <div class="field">
+                            <label for="departureDate">Check-out / Departure Date *</label>
+                            <input type="date" id="departureDate" name="departureDate" required>
+                        </div>
+                    </div>
+                    <p class="hint" id="nightsHint">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <span id="nightsHintText">Please choose your dates</span>
+                    </p>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-back" data-back>
+                        <ion-icon name="arrow-back-outline"></ion-icon> Back
+                    </button>
+                    <button type="button" class="btn btn-cancel-flow" data-cancel-wizard>
+                        <ion-icon name="close-outline"></ion-icon> Discard
+                    </button>
+                    <button type="button" class="btn btn-primary" data-next>
+                        Continue to Rooms <ion-icon name="arrow-forward-outline"></ion-icon>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 3 : ROOMS & GUESTS -->
+            <section class="panel" data-panel="3">
+                <div class="panel-head">
+                    <h2><ion-icon name="bed-outline"></ion-icon> Room Selection & Guests</h2>
+                    <span>Step 3 of 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="field">
+                        <label for="roomType">Room Category *</label>
+                        <select id="roomType" name="roomType" required>
+                            <option value="" disabled selected>Select your preferred room</option>
+                            <option value="Standard Room" data-rate="2500">Standard Room — ₱2,500 / night</option>
+                            <option value="Deluxe Room" data-rate="4200">Deluxe Room — ₱4,200 / night</option>
+                            <option value="Suite" data-rate="7800">Executive Suite — ₱7,800 / night</option>
+                            <option value="Family Room" data-rate="5500">Family Room — ₱5,500 / night</option>
+                        </select>
+                    </div>
+
+                    <div class="counter-group">
+                        <div class="counter-field">
+                            <label for="numRooms">Number of Rooms *</label>
+                            <div class="stepper-input">
+                                <button type="button" data-count="numRooms" data-dir="-1" aria-label="Decrease rooms">−</button>
+                                <input type="number" id="numRooms" name="numRooms" min="1" value="1" required readonly>
+                                <button type="button" data-count="numRooms" data-dir="1" aria-label="Increase rooms">+</button>
+                            </div>
+                            <span class="counter-desc">Total rooms for this stay</span>
+                        </div>
+                        <div class="counter-field">
+                            <label for="numAdults">Adult Guests (12+ yrs) *</label>
+                            <div class="stepper-input">
+                                <button type="button" data-count="numAdults" data-dir="-1" aria-label="Decrease adults">−</button>
+                                <input type="number" id="numAdults" name="numAdults" min="1" value="1" required readonly>
+                                <button type="button" data-count="numAdults" data-dir="1" aria-label="Increase adults">+</button>
+                            </div>
+                            <span class="counter-desc">Primary occupants</span>
+                        </div>
+                        <div class="counter-field">
+                            <label for="numChildren">Children (0-11 yrs)</label>
+                            <div class="stepper-input">
+                                <button type="button" data-count="numChildren" data-dir="-1" aria-label="Decrease children">−</button>
+                                <input type="number" id="numChildren" name="numChildren" min="0" value="0" readonly>
+                                <button type="button" data-count="numChildren" data-dir="1" aria-label="Increase children">+</button>
+                            </div>
+                            <span class="counter-desc">Complimentary stay</span>
+                        </div>
+                        <div class="counter-field">
+                            <label for="extraBeds">Extra Rollaway Bed</label>
+                            <div class="stepper-input">
+                                <button type="button" data-count="extraBeds" data-dir="-1" aria-label="Decrease extra beds">−</button>
+                                <input type="number" id="extraBeds" name="extraBeds" min="0" value="0" required readonly>
+                                <button type="button" data-count="extraBeds" data-dir="1" aria-label="Increase extra beds">+</button>
+                            </div>
+                            <span class="counter-desc">+₱500 per bed / night</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-back" data-back>
+                        <ion-icon name="arrow-back-outline"></ion-icon> Back
+                    </button>
+                    <button type="button" class="btn btn-cancel-flow" data-cancel-wizard>
+                        <ion-icon name="close-outline"></ion-icon> Discard
+                    </button>
+                    <button type="button" class="btn btn-primary" data-next>
+                        Review Reservation <ion-icon name="arrow-forward-outline"></ion-icon>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 4 : REVIEW & SIGN -->
+            <section class="panel" data-panel="4">
+                <div class="panel-head">
+                    <h2><ion-icon name="document-text-outline"></ion-icon> Review Summary & Agreement</h2>
+                    <span>Step 4 of 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="summary-card">
+                        <h3><ion-icon name="receipt-outline"></ion-icon> Booking Summary</h3>
+                        <dl class="summary-grid" id="summaryGrid">
+                            <dt>Hotel Property</dt><dd id="sumProperty">CCT Hotel & Resort</dd>
+                            <dt>Location</dt><dd id="sumAddress">CCT Campus Complex, Metro Manila</dd>
+                            <dt>Primary Guest</dt><dd id="sumGuest">—</dd>
+                            <dt>Guest Email</dt><dd id="sumEmail">—</dd>
+                            <dt>Guest Phone</dt><dd id="sumPhone">—</dd>
+                            <dt>Country</dt><dd id="sumCountry">—</dd>
+                            <dt>Check-in</dt><dd id="sumArrival">—</dd>
+                            <dt>Check-out</dt><dd id="sumDeparture">—</dd>
+                            <dt>Total Stay</dt><dd id="sumDuration">—</dd>
+                            <dt>Room Category</dt><dd id="sumRoomType">—</dd>
+                            <dt>Rooms Booked</dt><dd id="sumRooms">—</dd>
+                            <dt>Occupancy</dt><dd id="sumOccupancy">—</dd>
+                            <dt>Extra Beds</dt><dd id="sumExtraBeds">—</dd>
+                        </dl>
+                        <div class="summary-total">
+                            <span>Total Estimated Payable (incl. 12% VAT):</span>
+                            <strong id="sumTotal">₱0</strong>
+                        </div>
+                    </div>
+
+                    <h3 class="sub-heading"><ion-icon name="shield-outline"></ion-icon> Hotel Terms & Policies</h3>
+                    <div class="terms-box">
+                        <p><strong>1. Check-in & Check-out:</strong> Standard check-in time begins at 2:00 PM; check-out is at 12:00 PM noon.</p>
+                        <p><strong>2. Cancellation Policy:</strong> Free cancellation up to 48 hours prior to arrival date. Later cancellations or no-shows may incur a one-night room charge.</p>
+                        <p><strong>3. Property Guidelines:</strong> Smoking is prohibited in all interior rooms. Valid government ID and confirmation reference must be presented upon arrival.</p>
+                    </div>
+
+                    <label class="checkbox-row">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span>I have reviewed the booking details and agree to the Hotel Terms & Policies *</span>
+                    </label>
+
+                    <div class="field">
+                        <label for="digitalSignature">Digital Signature (Type your full name) *</label>
+                        <textarea id="digitalSignature" name="digitalSignature" rows="2" required
+                            placeholder="Type your full legal name to digitally sign this reservation"></textarea>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-back" data-back>
+                        <ion-icon name="arrow-back-outline"></ion-icon> Back
+                    </button>
+                    <button type="button" class="btn btn-cancel-flow" data-cancel-wizard>
+                        <ion-icon name="close-outline"></ion-icon> Discard
+                    </button>
+                    <button type="button" class="btn btn-primary" data-next>
+                        Proceed to Payment <ion-icon name="arrow-forward-outline"></ion-icon>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 5 : PAYMENT -->
+            <section class="panel" data-panel="5">
+                <div class="panel-head">
+                    <h2><ion-icon name="card-outline"></ion-icon> Payment Settlement</h2>
+                    <span>Step 5 of 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="amount-due">
+                        <div>
+                            <span class="label">Total Amount Due</span>
+                            <div class="meta" id="amountMeta">0 nights · 1 room · incl. taxes</div>
+                        </div>
+                        <span class="amount" id="amountDue">₱0</span>
+                    </div>
+
+                    <label class="field-label">Choose Payment Method *</label>
+                    <div class="pay-methods">
+                        <button type="button" class="pay-method is-selected" data-method="Bank Transfer">
+                            <ion-icon name="business-outline"></ion-icon>
+                            <span>Bank Transfer</span>
+                        </button>
+                        <button type="button" class="pay-method" data-method="GCash">
+                            <ion-icon name="phone-portrait-outline"></ion-icon>
+                            <span>GCash</span>
+                        </button>
+                        <button type="button" class="pay-method" data-method="Credit Card">
+                            <ion-icon name="card-outline"></ion-icon>
+                            <span>Credit Card</span>
+                        </button>
+                    </div>
+
+                    <div id="paymentFields">
+                        <div class="grid-2">
+                            <div class="field">
+                                <label for="cardholderName" id="lblPayerName">Cardholder / Account Name *</label>
+                                <input type="text" id="cardholderName" name="cardholderName" required placeholder="Name on payment account">
+                            </div>
+                            <div class="field">
+                                <label for="cardNumber" id="lblPayRef">Card / Reference / Phone Number *</label>
+                                <input type="text" id="cardNumber" name="cardNumber" required placeholder="•••• •••• •••• ••••" maxlength="24">
+                            </div>
+                        </div>
+                        <div class="grid-2" id="creditCardExtraFields">
+                            <div class="field">
+                                <label for="cardExpiry">Expiration Date *</label>
+                                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM / YY" maxlength="7">
+                            </div>
+                            <div class="field">
+                                <label for="cardCvv">Security CVV *</label>
+                                <input type="text" id="cardCvv" name="cardCvv" placeholder="•••" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-back" data-back>
+                        <ion-icon name="arrow-back-outline"></ion-icon> Back
+                    </button>
+                    <button type="button" class="btn btn-cancel-flow" data-cancel-wizard>
+                        <ion-icon name="close-outline"></ion-icon> Discard
+                    </button>
+                    <button type="button" class="btn btn-primary" data-next>
+                        Confirm & Pay <ion-icon name="checkmark-done-outline"></ion-icon>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 6 : CONFIRMATION -->
+            <section class="panel" data-panel="6">
+                <div class="panel-head">
+                    <h2><ion-icon name="checkmark-circle-outline"></ion-icon> Booking Confirmed</h2>
+                    <span>Step 6 of 6</span>
+                </div>
+                <div class="panel-body confirmation-body">
+                    <div class="confirm-icon">
+                        <ion-icon name="checkmark"></ion-icon>
+                    </div>
+                    <h3>Reservation Successfully Confirmed!</h3>
+                    <p id="confirmPaymentLine">Your booking and payment transaction have been successfully recorded. A confirmation receipt has been generated.</p>
+
+                    <div class="reference-card">
+                        <span class="label">Official Booking Reference</span>
+                        <strong id="bookingRef">CCT-2026-000000</strong>
+                        <span class="date" id="bookingDate">—</span>
+                    </div>
+
+                    <div class="confirm-actions">
+                        <button type="button" class="btn btn-back" id="copyRefBtn">
+                            <ion-icon name="copy-outline"></ion-icon>
+                            <span>Copy Reference</span>
+                        </button>
+                        <button type="button" class="btn btn-back" onclick="window.print()">
+                            <ion-icon name="print-outline"></ion-icon>
+                            <span>Print Receipt</span>
+                        </button>
+                        <button type="button" class="btn btn-back" id="downloadBtn">
+                            <ion-icon name="download-outline"></ion-icon>
+                            <span>Download Summary</span>
+                        </button>
+                        <a href="member-dashboard.html" class="btn btn-primary" style="text-decoration: none;">
+                            <ion-icon name="person-outline"></ion-icon>
+                            <span>View in Member Portal</span>
+                        </a>
+                        <button type="button" class="btn btn-danger-outline" id="cancelJustCreatedBtn">
+                            <ion-icon name="trash-outline"></ion-icon>
+                            <span>Cancel This Reservation</span>
+                        </button>
+                    </div>
+
+                    <a href="home.html" class="return-home-link">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        <span>Return to Hotel Home Page</span>
+                    </a>
+                </div>
+            </section>
+
+        </form>
+    </main>
+
+    <!-- CANCEL RESERVATION MODAL -->
+    <div class="cancel-modal-overlay" id="cancelModalOverlay"></div>
+    <div class="cancel-modal" id="cancelModal">
+        <div class="close-btn" id="closeCancelModal">&times;</div>
+
+        <div class="cancel-modal-head">
+            <div class="cancel-modal-icon">
+                <ion-icon name="close-circle"></ion-icon>
+            </div>
+            <h2>Cancel Hotel Reservation</h2>
+            <p>Locate your booking using your reference code to process a cancellation</p>
+        </div>
+
+        <!-- SEARCH RESERVATION FORM -->
+        <div id="cancelSearchSection">
+            <form id="cancelLookupForm">
+                <div class="field">
+                    <label for="lookupRef">Booking Reference Code *</label>
+                    <input type="text" id="lookupRef" name="lookupRef" placeholder="e.g. CCT-2026-894215" required>
+                    <div class="recent-ref-pills">
+                        <span>Sample references:</span>
+                        <button type="button" class="ref-pill-btn" data-sample="CCT-2026-894215">CCT-2026-894215</button>
+                        <button type="button" class="ref-pill-btn" data-sample="CCT-2026-773419">CCT-2026-773419</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="lookupName">Guest Name or Email *</label>
+                    <input type="text" id="lookupName" name="lookupName" placeholder="e.g. Maria Santos or maria@email.com" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="searchResBtn">
+                    <ion-icon name="search-outline"></ion-icon>
+                    <span>Find Reservation</span>
+                </button>
+            </form>
+            <p id="cancelLookupError" style="display: none; color: #ef4444; font-size: 13px; font-weight: 500; margin-top: 12px; text-align: center;"></p>
+        </div>
+
+        <!-- CONFIRMATION FORM (When Found) -->
+        <div id="cancelConfirmSection" style="display: none;">
+            <div class="found-res-card">
+                <div class="found-res-header">
+                    <span class="found-res-ref" id="foundResRef">CCT-2026-000000</span>
+                    <span class="status-pill status-pending" id="foundResStatus">Pending</span>
+                </div>
+                <dl class="found-grid">
+                    <dt>Guest Name:</dt><dd id="foundResGuest">—</dd>
+                    <dt>Room Category:</dt><dd id="foundResRoom">—</dd>
+                    <dt>Stay Dates:</dt><dd id="foundResDates">—</dd>
+                    <dt>Guests Count:</dt><dd id="foundResGuests">—</dd>
+                </dl>
+            </div>
+
+            <form id="cancelProceedForm">
+                <div class="field">
+                    <label for="cancelReason">Reason for Cancellation *</label>
+                    <select id="cancelReason" name="cancelReason" required>
+                        <option value="" disabled selected>Select a reason</option>
+                        <option value="Change of travel plans / dates">Change of travel plans or schedule</option>
+                        <option value="Booked another hotel / accommodation">Booked another accommodation</option>
+                        <option value="Personal or family emergency">Personal or family emergency</option>
+                        <option value="Accidental / duplicate booking">Accidental or duplicate booking</option>
+                        <option value="Other reasons">Other reasons</option>
+                    </select>
+                </div>
+
+                <label class="checkbox-row" style="margin-bottom: 20px;">
+                    <input type="checkbox" id="confirmCancelPolicy" required>
+                    <span style="font-size: 12.5px;">I understand that cancelling this booking is irreversible in accordance with the CCT Hotel cancellation policy. *</span>
+                </label>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-back" id="backToSearchBtn" style="flex: 1; justify-content: center;">Back</button>
+                    <button type="submit" class="btn-confirm-cancel" id="btnConfirmCancelFinal" style="flex: 2;">
+                        <ion-icon name="trash-outline"></ion-icon>
+                        <span>Confirm Cancellation</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SUCCESS CANCELLATION NOTICE -->
+        <div id="cancelSuccessSection" class="cancel-success-view" style="display: none;">
+            <div class="cancel-success-icon">
+                <ion-icon name="checkmark-done"></ion-icon>
+            </div>
+            <span class="cancel-stamp-badge">Cancelled</span>
+            <h3>Reservation Successfully Cancelled</h3>
+            <p id="cancelSuccessMsg">Booking <strong id="cancelledRefCode">CCT-2026-000000</strong> has been officially cancelled. No cancellation fees apply, and any room holds have been released.</p>
+            
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" id="closeSuccessBtn">Done</button>
+                <a href="member-dashboard.html" class="btn btn-back" style="text-decoration: none;">View Member Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ionicons & Booking JS -->
+    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
+    <script src="booking.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+
+</html>

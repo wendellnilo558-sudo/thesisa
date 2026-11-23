@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCT Hotel Chatbot Demo</title>
+    <link rel="stylesheet" href="chatbot.css">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f6f7fb; margin: 0;
+               display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+        h1 { color: #1c1f4a; } p { color: #666; }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>CCT Hotel &amp; Resort</h1>
+        <p>Click the chat bubble at the bottom-right to try the assistant.</p>
+    </div>
+
+    <!-- ============  chatbot markup  ============ -->
+
+    <!-- Launcher button -->
+    <button class="cb-launcher" id="cbLauncher" aria-label="Open chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <!-- Chat window -->
+    <div class="cb-window" id="cbWindow">
+        <div class="cb-header">
+            <div class="cb-header-title">
+                CCT Hotel Assistant
+                <small>Typically replies instantly</small>
+            </div>
+            <button class="cb-close" id="cbClose" aria-label="Close chat">&times;</button>
+        </div>
+
+        <!-- Messages are added here by chatbot.js -->
+        <div class="cb-messages" id="cbMessages"></div>
+
+        <!-- Quick-reply buttons are added here by chatbot.js -->
+        <div class="cb-quick" id="cbQuick"></div>
+
+        <div class="cb-input-wrap">
+            <form class="cb-input-box" id="cbForm" autocomplete="off">
+                <input type="text" id="cbInput" placeholder="Write a reply...">
+
+                <!-- Attach button -->
+                <button type="button" class="cb-icon-btn" id="cbAttach" aria-label="Attach file">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+
+                <!-- Send button -->
+                <button type="submit" class="cb-icon-btn cb-send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+
+                <input type="file" id="cbFile" hidden>
+            </form>
+        </div>
+    </div>
+    <script src="chatbot.js"></script>
+</body>
+</html>

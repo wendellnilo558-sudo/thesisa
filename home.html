@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCT Hotel & Resort | Official Guest Reservation</title>
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<!-- Launcher button -->
+    <button class="cb-launcher" id="cbLauncher" aria-label="Open chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <!-- Chat window -->
+    <div class="cb-window" id="cbWindow">
+        <div class="cb-header">
+            <div class="cb-header-title">
+                CCT Hotel Assistant
+                <small>Typically replies instantly</small>
+            </div>
+            <button class="cb-close" id="cbClose" aria-label="Close chat">&times;</button>
+        </div>
+
+        <!-- Messages are added here by chatbot.js -->
+        <div class="cb-messages" id="cbMessages"></div>
+
+        <!-- Quick-reply buttons are added here by chatbot.js -->
+        <div class="cb-quick" id="cbQuick"></div>
+
+        <div class="cb-input-wrap">
+            <form class="cb-input-box" id="cbForm" autocomplete="off">
+                <input type="text" id="cbInput" placeholder="Write a reply...">
+
+                <!-- Attach button -->
+                <button type="button" class="cb-icon-btn" id="cbAttach" aria-label="Attach file">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+
+                <!-- Send button -->
+                <button type="submit" class="cb-icon-btn cb-send" aria-label="Send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+
+                <input type="file" id="cbFile" hidden>
+            </form>
+        </div>
+    </div>
+
+<body>
+    <!-- HERO SECTION -->
+    <header class="hero" id="home">
+        <!-- NAVIGATION -->
+        <nav>
+            <a href="home.html" class="logo-link">
+                <img src="images/logo.png" class="logo" alt="CCT Hotel Logo" onerror="this.src='images/vendor.png'">
+                <div class="logo-text">CCT <span>Hotel</span></div>
+            </a>
+            <ul>
+                <li><a href="home.html" class="active">Home</a></li>
+                <li><a href="#rooms">Rooms & Suites</a></li>
+                <li><a href="#amenities">Amenities</a></li>
+                <li><a href="booking.html">Make Reservation</a></li>
+                <li><a href="member-dashboard.html">My Reservations</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="login-btn member-nav-btn" id="openMemberLoginBtn">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                    <span>Member Login</span>
+                </a>
+                <a href="booking.html" class="nav-book-btn">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>Book Now</span>
+                </a>
+                <a href="#" class="login-btn" id="openStaffLoginBtn" title="Hotel Staff Portal">Staff</a>
+            </div>
+        </nav>
+
+        <!-- HERO CONTENT -->
+        <div class="hero-center">
+            <span class="hero-tag">Luxury & Hospitality</span>
+            <h1>Your Perfect Stay <span>Awaits You</span></h1>
+            <p>Experience world-class hospitality with seamless online reservations. Choose from our luxury suites and
+                enjoy an unforgettable stay with state-of-the-art amenities.</p>
+            <div class="hero-cta-group">
+                <a href="booking.html" class="book-btn">
+                    <ion-icon name="flash-outline"></ion-icon>
+                    <span>Book Your Stay</span>
+                </a>
+                <a href="#rooms" class="explore-btn">
+                    <span>Explore Rooms</span>
+                    <ion-icon name="arrow-down-outline"></ion-icon>
+                </a>
+            </div>
+        </div>
+
+        <!-- QUICK BOOKING SEARCH BAR -->
+        <div class="booking-quick-bar">
+            <form id="quickSearchForm">
+                <div class="quick-field">
+                    <label for="qsArrival">Check-in Date</label>
+                    <input type="date" id="qsArrival" name="arrival" required>
+                </div>
+                <div class="quick-field">
+                    <label for="qsDeparture">Check-out Date</label>
+                    <input type="date" id="qsDeparture" name="departure" required>
+                </div>
+                <div class="quick-field">
+                    <label for="qsRoomType">Room Category</label>
+                    <select id="qsRoomType" name="room">
+                        <option value="Standard Room">Standard Room (₱2,500/night)</option>
+                        <option value="Deluxe Room" selected>Deluxe Room (₱4,200/night)</option>
+                        <option value="Suite">Suite Room (₱7,800/night)</option>
+                        <option value="Family Room">Family Room (₱5,500/night)</option>
+                    </select>
+                </div>
+                <div class="quick-field">
+                    <label for="qsGuests">Guests</label>
+                    <select id="qsGuests" name="guests">
+                        <option value="1">1 Adult</option>
+                        <option value="2" selected>2 Adults</option>
+                        <option value="3">3 Adults</option>
+                        <option value="4">4+ Adults / Family</option>
+                    </select>
+                </div>
+                <button type="submit" class="quick-submit-btn">
+                    <ion-icon name="search-outline"></ion-icon>
+                    <span>Book Now</span>
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- ROOMS SECTION -->
+    <section class="rooms" id="rooms">
+        <div class="section-head">
+            <span class="section-tag">Accommodations</span>
+            <h2>Rooms & Luxury Suites</h2>
+            <p class="rooms-subtitle">Select the room that fits your style. All stays include complimentary breakfast, high-speed Wi-Fi, and premium hotel services.</p>
+        </div>
+
+        <div class="room-container">
+            <!-- Room 1 -->
+            <div class="room-card">
+                <div class="room-img-box">
+                    <img src="images/room.jpg" alt="Standard Room" onerror="this.src='images/mamamo.jpg'">
+                    <span class="room-badge">Popular</span>
+                </div>
+                <div class="room-info">
+                    <div class="room-features">
+                        <span><ion-icon name="bed-outline"></ion-icon> 1 Queen Bed</span>
+                        <span><ion-icon name="people-outline"></ion-icon> Up to 2 Guests</span>
+                    </div>
+                    <h3>Standard Room</h3>
+                    <p>Designed for comfort and functionality with modern fixtures, ergonomic workspace, and en-suite rainfall shower.</p>
+                    <div class="room-footer">
+                        <div class="room-price">
+                            <span class="amount">₱2,500</span>
+                            <span class="unit">per night / incl. taxes</span>
+                        </div>
+                        <a href="booking.html?room=Standard+Room" class="room-btn" data-room="Standard Room">
+                            <span>Book Room</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 2 -->
+            <div class="room-card">
+                <div class="room-img-box">
+                    <img src="images/mamamo.jpg" alt="Deluxe Room" onerror="this.src='images/room.jpg'">
+                    <span class="room-badge">Best Value</span>
+                </div>
+                <div class="room-info">
+                    <div class="room-features">
+                        <span><ion-icon name="bed-outline"></ion-icon> 1 King Bed</span>
+                        <span><ion-icon name="people-outline"></ion-icon> Up to 2 Guests</span>
+                    </div>
+                    <h3>Deluxe Room</h3>
+                    <p>Spacious accommodation with panoramic city views, plush king-sized bed, mini-bar, and deluxe bathroom amenities.</p>
+                    <div class="room-footer">
+                        <div class="room-price">
+                            <span class="amount">₱4,200</span>
+                            <span class="unit">per night / incl. taxes</span>
+                        </div>
+                        <a href="booking.html?room=Deluxe+Room" class="room-btn" data-room="Deluxe Room">
+                            <span>Book Room</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 3 -->
+            <div class="room-card">
+                <div class="room-img-box">
+                    <img src="images/room.jpg" alt="Suite Room" onerror="this.src='images/mamamo.jpg'">
+                    <span class="room-badge">Luxury</span>
+                </div>
+                <div class="room-info">
+                    <div class="room-features">
+                        <span><ion-icon name="bed-outline"></ion-icon> 1 Super King Bed</span>
+                        <span><ion-icon name="people-outline"></ion-icon> Up to 3 Guests</span>
+                    </div>
+                    <h3>Suite Room</h3>
+                    <p>Our premier suite offers an executive lounge space, private balcony, luxury soaking tub, and personalized concierge care.</p>
+                    <div class="room-footer">
+                        <div class="room-price">
+                            <span class="amount">₱7,800</span>
+                            <span class="unit">per night / incl. taxes</span>
+                        </div>
+                        <a href="booking.html?room=Suite" class="room-btn" data-room="Suite">
+                            <span>Book Room</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 4 -->
+            <div class="room-card">
+                <div class="room-img-box">
+                    <img src="images/mamamo.jpg" alt="Family Room" onerror="this.src='images/room.jpg'">
+                    <span class="room-badge">Spacious</span>
+                </div>
+                <div class="room-info">
+                    <div class="room-features">
+                        <span><ion-icon name="bed-outline"></ion-icon> 2 Queen Beds</span>
+                        <span><ion-icon name="people-outline"></ion-icon> Up to 4 Guests</span>
+                    </div>
+                    <h3>Family Room</h3>
+                    <p>Perfect for vacations with family or friends. Equipped with multiple beds, dining nook, extra wardrobe, and entertainment setup.</p>
+                    <div class="room-footer">
+                        <div class="room-price">
+                            <span class="amount">₱5,500</span>
+                            <span class="unit">per night / incl. taxes</span>
+                        </div>
+                        <a href="booking.html?room=Family+Room" class="room-btn" data-room="Family Room">
+                            <span>Book Room</span>
+                            <ion-icon name="arrow-forward-outline"></ion-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AMENITIES SECTION -->
+    <section class="amenities-section" id="amenities">
+        <div class="section-head">
+            <span class="section-tag">Hotel Privileges</span>
+            <h2>World-Class Amenities</h2>
+            <p class="rooms-subtitle">Every guest receives premier hospitality, contemporary comforts, and top-tier services during their stay.</p>
+        </div>
+
+        <div class="amenities-grid">
+            <div class="amenity-card">
+                <div class="amenity-icon"><ion-icon name="wifi-outline"></ion-icon></div>
+                <h3>Ultra-Fast Wi-Fi</h3>
+                <p>High-speed gigabit internet available seamlessly throughout rooms and all hotel public areas.</p>
+            </div>
+            <div class="amenity-card">
+                <div class="amenity-icon"><ion-icon name="water-outline"></ion-icon></div>
+                <h3>Infinity Pool</h3>
+                <p>Relax and unwind at our temperature-controlled outdoor rooftop pool with sun loungers.</p>
+            </div>
+            <div class="amenity-card">
+                <div class="amenity-icon"><ion-icon name="restaurant-outline"></ion-icon></div>
+                <h3>Gourmet Dining</h3>
+                <p>Enjoy local and international delicacies crafted by seasoned chefs at our on-site restaurant.</p>
+            </div>
+            <div class="amenity-card">
+                <div class="amenity-icon"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+                <h3>24/7 Security & Support</h3>
+                <p>Front-desk concierge service and strict round-the-clock safety for complete peace of mind.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="footer-top">
+            <div class="footer-col">
+                <div class="logo-link" style="margin-bottom: 18px;">
+                    <img src="images/logo.png" class="logo" alt="CCT Hotel Logo" onerror="this.src='images/vendor.png'">
+                    <div class="logo-text">CCT <span>Hotel</span></div>
+                </div>
+                <p>CCT Hotel & Resort is committed to providing exceptional experiences, restful accommodations, and personalized care for every guest.</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#rooms">Rooms & Rates</a></li>
+                    <li><a href="#amenities">Hotel Amenities</a></li>
+                    <li><a href="booking.html">Make Reservation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Room Types</h4>
+                <ul>
+                    <li><a href="booking.html?room=Standard+Room">Standard Room</a></li>
+                    <li><a href="booking.html?room=Deluxe+Room">Deluxe Room</a></li>
+                    <li><a href="booking.html?room=Suite">Executive Suite</a></li>
+                    <li><a href="booking.html?room=Family+Room">Family Room</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <ul class="contact-info">
+                    <li>
+                        <ion-icon name="location-outline"></ion-icon>
+                        <span>CCT Campus Complex, Metro Manila, Philippines</span>
+                    </li>
+                    <li>
+                        <ion-icon name="call-outline"></ion-icon>
+                        <span>+63 (02) 8123-4567 / +63 917 123 4567</span>
+                    </li>
+                    <li>
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <span>reservations@ccthotel.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CCT Hotel & Resort. All rights reserved.</p>
+            <p>
+                <a href="#" id="footerMemberLogin">Member / Renter Login</a> · 
+                <a href="#" id="footerStaffLogin">Staff Admin Portal &rarr;</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- LOGIN POPUP MODAL (Member/Renter & Staff) -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="loginPopup">
+        <div class="close-btn" id="closeLogin">&times;</div>
+        
+        <!-- Role Switching Tabs -->
+        <div class="modal-tabs">
+            <button type="button" class="modal-tab-btn is-active" id="tabMemberBtn" data-target="member">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Member / Renter</span>
+            </button>
+            <button type="button" class="modal-tab-btn" id="tabStaffBtn" data-target="staff">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                <span>Hotel Staff</span>
+            </button>
+        </div>
+
+        <!-- MEMBER / RENTER FORM -->
+        <div class="form auth-panel is-active" id="memberAuthPanel">
+            <h2>Member & Renter Log In</h2>
+            <p class="form-desc">Sign in to view your pending & completed hotel stays and member perks</p>
+
+            <div class="demo-hint-box">
+                <div>
+                    <span>Demo: <strong>member@ccthotel.com</strong></span>
+                </div>
+                <button type="button" class="demo-fill-btn" id="fillMemberDemo">Auto-fill</button>
+            </div>
+
+            <form id="memberLoginForm">
+                <div class="form-element">
+                    <label for="memberEmail">Email or Membership ID</label>
+                    <input type="text" id="memberEmail" placeholder="e.g. maria.santos@email.com" value="maria.santos@email.com" required>
+                </div>
+                <div class="form-element">
+                    <label for="memberPassword">Password</label>
+                    <input type="password" id="memberPassword" placeholder="Enter password" value="password123" required>
+                </div>
+                <div class="form-element remember-me">
+                    <input type="checkbox" id="member-remember-me" checked>
+                    <label for="member-remember-me">Keep me logged in</label>
+                </div>
+                <div class="form-element">
+                    <button type="submit" id="memberSubmitBtn">Access Member Dashboard</button>
+                </div>
+                <div class="form-footer">
+                    <a href="booking.html">Need a Room? Book Stay</a>
+                    <a href="member-dashboard.html">Direct Dashboard Link &rarr;</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- STAFF / ADMIN FORM -->
+        <div class="form auth-panel" id="staffAuthPanel" style="display: none;">
+            <h2>Hotel Staff Sign In</h2>
+            <p class="form-desc">Authorized personnel access to the Hotel Management System</p>
+
+            <div class="demo-hint-box">
+                <div>
+                    <span>Demo: <strong>admin@ccthotel.com</strong></span>
+                </div>
+                <button type="button" class="demo-fill-btn" id="fillStaffDemo">Auto-fill</button>
+            </div>
+
+            <form id="staffLoginForm">
+                <div class="form-element">
+                    <label for="staffEmail">Staff Email Address</label>
+                    <input type="text" id="staffEmail" placeholder="admin@ccthotel.com" value="admin@ccthotel.com" required>
+                </div>
+                <div class="form-element">
+                    <label for="staffPassword">Password</label>
+                    <input type="password" id="staffPassword" placeholder="Enter password" value="password123" required>
+                </div>
+                <div class="form-element remember-me">
+                    <input type="checkbox" id="staff-remember-me" checked>
+                    <label for="staff-remember-me">Remember this workstation</label>
+                </div>
+                <div class="form-element">
+                    <button type="submit" id="staffSubmitBtn">Access Admin Portal</button>
+                </div>
+                <div class="form-footer">
+                    <a href="#">Help Desk</a>
+                    <a href="../CCT HOTEL/js/index.html">Admin Direct Link &rarr;</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ionicons & Home JS -->
+    <script type="module" src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@8.0.13/dist/ionicons/ionicons.js"></script>
+    <script src="home.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+
+</html>
